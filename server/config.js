@@ -1,3 +1,5 @@
+const { getClient } = require("@mysql/xdevapi");
+
 var config = {};
 
 //nodejs server app's setting 
@@ -6,39 +8,47 @@ config.app = {
   port: 3000
 }
 
-// Two methods:
-// mysqlx.getSession() to a single instance
-// mysqlx.getClient()  for pooling
-
-//this is the config for getSession()
-// use this to create a session in the app
-// session = mysqlx.getSession(config.session)
-config.session = {
+// connection module is an object that defines connection configuration properties
+// https://dev.mysql.com/doc/dev/connector-nodejs/8.0/module-Connection.html
+config.connection = {
   host:'localhost',
   port: 33060,
   user: 'root',
-  password:'SEPHORA2021!'
-  schema: 'nihaoma'
+  password:'xxxxx',
+  schema: 'nihaoma'  //default database to connect to (defaults to '')
 };
 
-// or 
-// uri = 'mysqlx://root:passwd@localhost:33060/mySchema'
-// session = mysqlx.getSession(uri)
+// connection properties can be written together in an url format
+config.connectionUrl = 'mysqlx://root:xxxxx@localhost:33060/nihaoma'
 
-// format for uri
-// uri = mysqlx://root:passwd@localhost:33060/mySchema
-// client = mysqlx.getClient(uri, {pooling})
-
-config.pooling = {
-  uri: 'mysqlx://root:SEPHORA2021!@localhost:33060/nihaoma'
-  pooling: {enabled: true, maxIdleTime:500, maxSize:25, queueTimeout:500}
+// Connection pool is an object that describes the pool configuration properties.
+// https://dev.mysql.com/doc/dev/connector-nodejs/8.0/module-ConnectionPool.html
+config.connectionPool = { 
+  pooling: { 
+    enabled: true, 
+    maxIdleTime:500, 
+    maxSize:25, 
+    queueTimeout:500
+  }
 }
-// use this to create a client in app
-// const client = mysql.getClient(config.pooling)
 
-// if use default, can simply do this
-// const client = mysqlx.getClient('mysqlx:root@localhost:33060');
+// Two ways to make mysql database connection using mysqlx api
 
+// ====== use getSession() to connect to a single instance
+
+// session = mysqlx.getSession(config.connection)
+
+// or 
+// session = mysqlx.getSession(config.connectionUrl)
+
+// if default schema is defined: 
+// schema = mysqlx.getSession(config.connection)
+
+// ========= use getClient() to connect to a connection pool
+// const client = mysqlx.getClient(config.connectionUrl,config.connectionPool);
+
+// if use default pool properties, can simply do this
+// const client = mysqlx.getClient(config.connectionUrl);
 
 module.exports = config;
 
