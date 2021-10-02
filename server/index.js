@@ -1,22 +1,32 @@
 'use strict';
 
+const config = require('../../config')
 const hapi = require ('@hapi/hapi')
 const mysqlx = require('@mysql/xdevapi')
-const config = require('./config')
 
 const init = async () => {
 
-  const server = Hapi.server({
-    port: 3000,
-    host: 'localhost'
-  });
+  const server = hapi.server(config.app)
+  //create a connection pool
+  const client = mysqlx.getClient(config.connectionUrl, config.connectionPool)
 
   server.route({
       method: 'GET',
       path: '/',
-      handler: (request, h) => {
+      handler: async () => {
 
-        return 'Hello World! I can use nodemon to automatically refresh pages. ';
+        // get a session from the connection pool using client
+        const session = await client.getSession()
+
+        // get schema name of default schema
+        const schemaName = await session.getDefaultSchema().getName()
+
+        console.log("host:", session.inspect(),"schema by client", schemaName);
+
+        return { 
+            host: session.inspect(), 
+            schemaFromClient: schemaName 
+        } 
 
       }
   });

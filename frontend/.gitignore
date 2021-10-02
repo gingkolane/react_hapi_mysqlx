@@ -21,3 +21,8 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# myignore
+step_by_step_frontend
+package-lock.json
+yarn.lock

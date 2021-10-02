@@ -120,5 +120,7 @@ dist
 .pnp.*
 
 # myignore
-step_by_step
-demoapp.js
+package-lock.json
+_demoapp.js
+config.js
+step_by_step_server
