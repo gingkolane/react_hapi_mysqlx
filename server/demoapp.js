@@ -69,6 +69,9 @@ process.on('unhandledRejection',err => {
     console.log(err)
 })
 
+
+
+
 var mysqlx = require('mysqlx');
 
 // Connect to server on localhost
@@ -90,3 +93,21 @@ var myDocs = myColl.find('name like :param').limit(1).
 print(myDocs.fetchOne());
 
 mySession.close();
+
+const Hapi = require('@hapi/hapi')
+const mysqlx = require('@mysql/xdevapi')
+
+const server = hapi.server(config.app)
+const client = await mysqlx.getClient(config.db.pooling)
+
+session = await client.getSession()
+
+const schemas = await session.getSchemas()
+
+return { host: session.insepect().host, schemas: schemas.map(s => s.getName())}
+
+
+ //shared database session
+ let session
+
+ const config = require('./config')
