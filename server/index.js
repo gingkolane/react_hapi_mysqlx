@@ -1,6 +1,8 @@
 'use strict';
 
-const Hapi = require('@hapi/hapi');
+const hapi = require ('@hapi/hapi')
+const mysqlx = require('@mysql/xdevapi')
+const config = require('./config')
 
 const init = async () => {
 
