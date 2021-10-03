@@ -122,5 +122,5 @@ dist
 # myignore
 package-lock.json
 _demoapp.js
-config.js
 step_by_step_server
+config.js
