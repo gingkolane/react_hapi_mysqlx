@@ -1,6 +1,6 @@
 'use strict';
 
-const config = require('../../config')
+const config = require('./config.js')
 const hapi = require ('@hapi/hapi')
 const mysqlx = require('@mysql/xdevapi')
 
@@ -15,17 +15,30 @@ const init = async () => {
       path: '/',
       handler: async () => {
 
-        // get a session from the connection pool using client
+        // get a session from the connection pool using client, 
+        // must have a session variable defined.         // Note: getDefaultSchema() is a method of session, must be used on a session.
         const session = await client.getSession()
+        
+        // get users array from 'users' table
+        const usersTable = await session.getDefaultSchema().getTable('users')
 
-        // get schema name of default schema
-        const schemaName = await session.getDefaultSchema().getName()
+        const userRows = await usersTable.select().execute()
 
-        console.log("host:", session.inspect(),"schema by client", schemaName);
+        // const userFirst= await userRows.fetchOne()
+
+        const userArr = await userRows.fetchAll()
+
+        const foundUser = usersTable.select().where('username like :username').bind('username', 'Oliver').execute()
+
+        console.log("host:", session.inspect(),userRows, userArr, foundUser);
 
         return { 
             host: session.inspect(), 
-            schemaFromClient: schemaName 
+            // usersTable: usersTable, 
+            userRows: userRows, 
+            // userFirst: userFirst,
+            userArr: userArr,
+            foundUser: foundUser
         } 
 
       }
