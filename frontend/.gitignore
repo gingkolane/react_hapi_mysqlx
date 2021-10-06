@@ -25,5 +25,6 @@ yarn-error.log*
 # myignore
 step_by_step_frontend
 package-lock.json
+config.js
 yarn.lock
 _*
